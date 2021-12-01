@@ -1,3 +1,4 @@
+import json
 import sys
 import traceback
 import dash_uploader as du
@@ -53,7 +54,8 @@ app = dash.Dash(
 app.title = "nis感染性事件计算"
 
 server = app.server
-
+os.makedirs(os.getcwd() + '\\upload',exist_ok=True)
+os.makedirs(os.getcwd() + '\\out',exist_ok=True)
 upload_path = os.getcwd() + '\\upload'
 du.configure_upload(app, upload_path, use_upload_id=True)
 
@@ -97,9 +99,9 @@ def list_months(btime, etime):
 
 def discriminated_antis(all_antis):
     try:
-        df_抗菌药物 = pd.read_csv(r'../抗菌药物字典.csv')
+        df_抗菌药物 = pd.read_csv(r'./抗菌药物字典.csv')
     except:
-        df_抗菌药物 = pd.read_csv(r'../抗菌药物字典.csv', encoding='gbk')
+        df_抗菌药物 = pd.read_csv(r'./抗菌药物字典.csv', encoding='gbk')
     def isanti(x):
         df_抗菌药物['药品'] = x.抗菌药物
         df1 = df_抗菌药物[df_抗菌药物['规则等级']==1]
@@ -139,8 +141,8 @@ def get_upload_component(id):
         cancel_button=True,
         pause_button=True,
         max_file_size=1800,  # 1800 Mb
-        # filetypes=['csv', 'zip'],
-        filetypes=['csv'],
+        filetypes=['csv', 'zip'],
+        # filetypes=['csv'],
         upload_id=uid,  # Unique session id
 )
 
@@ -153,11 +155,11 @@ def bg_compute(btime, etime, param, antis_dict):
         encoding='UTF-8')
     min_time = pd.to_datetime('1680-01-01')
     now_time = datetime.now()
-
+    
     try:
-        antis_权重 = pd.read_csv(r'../抗菌药物权重.csv')
+        antis_权重 = pd.read_csv(r'./抗菌药物权重.csv')
     except:
-        antis_权重 = pd.read_csv(r'../抗菌药物权重.csv', encoding='gbk')
+        antis_权重 = pd.read_csv(r'./抗菌药物权重.csv', encoding='gbk')
 
     antis_权重 = antis_权重[['抗菌药物通用名', '权重']]
 
@@ -874,8 +876,8 @@ def bg_compute(btime, etime, param, antis_dict):
 def compute_layout():
     return html.Div(
     [
-        html.Br(),
-        html.Br(),
+         dbc.Row(html.Br()),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dcc.Link(
@@ -893,12 +895,12 @@ def compute_layout():
             ],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [dbc.Col(width=1),dbc.Col(html.H3("数据库连接"), width=10), dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [   dbc.Col(width=1),
                 dbc.Col([
@@ -929,8 +931,8 @@ def compute_layout():
                 dbc.Col(width=1),
             ],justify="center",
         ),
-        html.Br(),
-        html.Br(),
+         dbc.Row(html.Br()),
+         dbc.Row(html.Br()),
         dbc.Row(
             [   dbc.Col(width=1),
                 dbc.Col([
@@ -957,13 +959,13 @@ def compute_layout():
                 dbc.Col(width=1),
             ],justify="center",
         ),
-        html.Br(),
-        html.Br(),
+         dbc.Row(html.Br()),
+         dbc.Row(html.Br()),
         dbc.Row(
             [dbc.Col(width=1),dbc.Col(html.H3("数据库连接"), width=10), dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -978,7 +980,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -993,7 +995,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1008,7 +1010,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1023,7 +1025,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1038,7 +1040,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1053,7 +1055,7 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1068,13 +1070,13 @@ def compute_layout():
                 dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [dbc.Col(width=1),dbc.Col(html.H3("统计时段信息"), width=10), dbc.Col(width=1),],
             justify="center",
         ),
 
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [   dbc.Col(width=1),
                 dbc.Col([
@@ -1094,7 +1096,7 @@ def compute_layout():
                 dbc.Col(width=1),
             ],justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1105,7 +1107,7 @@ def compute_layout():
                 dbc.Col(width=1),
             ],justify="center",
         ),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row(
             [
                 dbc.Col(width=1),
@@ -1117,12 +1119,12 @@ def compute_layout():
             ],justify="center",
         ),
 
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row([dbc.Col(width=1),dbc.Button('计算', id='start-fullscreen'),dbc.Col(width=1)],justify="center"),
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row([dbc.Col(width=1),dbc.Col(dbc.Spinner(html.Ul(id='error_msg')),width=10),dbc.Col(width=1)],justify="center"),
 
-        html.Br(),
+         dbc.Row(html.Br()),
         dbc.Row([dbc.Col(width=1),
                  dcc.RadioItems(
                      id='fig_type',options=[
@@ -1132,21 +1134,27 @@ def compute_layout():
                         {'label': '手术患者比例', 'value': '手术患者比例'}
                     ], value='总人数'),
                  dbc.Col(width=1)],justify="center"),
-        html.Div([dcc.Graph(id='hos_line' )]),
-        dbc.Row([dbc.Col(width=1),html.Div(id='intermediate-value',style = {'content-visibility':'hidden'}),dbc.Col(width=1)],justify="center"),
-        html.Br(),
-        html.Br(),
-        html.Br(),
+
+        dbc.Row([
+            dbc.Col(width=1),
+            dbc.Col(dcc.Graph(id='hos_line'), width=10),
+            dbc.Col(width=1),
+        ], justify="center", ),
+
+        # html.Div([dcc.Graph(id='hos_line' )]),
+        dbc.Row(dcc.Store(id='intermediate-value' ) ),
+         dbc.Row(html.Br()),
+         dbc.Row(html.Br()),
+         dbc.Row(html.Br()),
     ]
 )
 
 def detail_layout():
-
-
     return  html.Div(
     [
-        html.Br(),
-        html.Br(),
+        dbc.Row(html.Br()),
+        dbc.Row(html.Br()),
+        # 功能按钮
         dbc.Row(
             [
                 dcc.Link(
@@ -1164,13 +1172,13 @@ def detail_layout():
             ],
             justify="center",
         ),
-        html.Br(),
+        dbc.Row(html.Br()),
         dbc.Row(
             [dbc.Col(width=1),dbc.Col(html.H3("展示表选择"), width=10), dbc.Col(width=1),],
             justify="center",
         ),
-        html.Br(),
-
+        dbc.Row(html.Br()),
+        # 上传及合并文件下载
         dbc.Row(
             [dbc.Col(width=1),
              dbc.Col(
@@ -1189,71 +1197,34 @@ def detail_layout():
                                     href=f"/dash/detail",
                                     ),
                                 justify="center"),
-                            html.Br(),
+                             dbc.Row(html.Br()),
                             dbc.Row(dbc.Button('合并', id='merge-date'),justify="center")
                         ]
                         ,width=1,style={'margin-top':'0.8%'}),
-                    dbc.Col( id = 'merge-date-down',width=6 ,style={'display':'flex','align-items':'center','justify-content':'center'} )
-                    ],justify="center",
-                ), width=10), dbc.Col(width=1),],
-            justify="center",
+                    dbc.Col(
+                        [
+                            dbc.Spinner(dbc.Col(id='merge-date-down'))
+                        ], width=6, style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}
+                    ) ],justify="center",
+                ), width=10),
+             dbc.Col(width=1),
+             ],justify="center",
         ),
-        html.Br(),
+        dbc.Row(html.Br()),
+
         dbc.Row(
             [dbc.Col(width=1), dbc.Col(html.H3("数据质量结果展示"), width=10), dbc.Col(width=1), ],
             justify="center",
         ),
-        html.Br(),
 
-        dbc.Row(
-            [
-                dbc.Col(width=1),
-                dbc.Col( [
-                    dbc.Label(html.B("数据展示类型:"), id="hos-data-type"),
-                    dcc.Dropdown(
-                        id='event_type',
-                        options=[{'label': i, 'value': i} for i in ['未进行计算人数', '未感染性事件计算比例']],
-                        value='未进行计算人数'
-                    ),
-                    # html.Div(dcc.Graph(id='hos_bar')),
-                    ] ),
-                dbc.Col(width=1),
-                dbc.Col([
-                    dbc.Label(html.B("医院名称:"), id="hospname-label"),
-                    dcc.Dropdown(id='event_hospital',),
-                    # html.Div([dcc.Graph(id='hos_pie')])
-                ]),
-                dbc.Col(width=1),
-
-            ], justify="center",
-        ),
-        html.Br(),
-
-        dbc.Row(
-            [
-                dbc.Col(
-                    dbc.Row([
-                        dbc.Col(width=1),
-                        dbc.Col(dcc.Graph(id='hos_bar'), width=11),
-                    ], justify="center",) ,width=5),
-                dbc.Col(width=1),
-                dbc.Col(
-                    dbc.Row([
-                        dbc.Col(dcc.Graph(id='hos_pie'), width=11),
-                        dbc.Col(width=1),
-                    ], justify="center", ), width=5),
-                # dbc.Col( dcc.Graph(id='hos_pie') ,width=5),
-            ], justify="center",
-        ),
-
-
-        html.Br(),
+        dbc.Row(html.Br()),
+        # 图三下拉框和选择框
         dbc.Row([
             dbc.Col(width=1),
             dbc.Col([
                 dbc.Label(html.B("医院选择:"), id="hos-choice"),
                 dcc.Dropdown(id='lis_hos', multi=True),
-                html.Br(),
+                dbc.Row(html.Br()),
                 dcc.RadioItems(
                     id='fig_type',
                     options=[
@@ -1267,23 +1238,132 @@ def detail_layout():
             ]),
             dbc.Col(width=1),
         ]),
-        html.Br(),
+
+        dbc.Row(html.Br()),
+
+        # 图三
         dbc.Row([
             dbc.Col(width=1),
-            dbc.Col(dcc.Graph(id='hos_line_mul'),width=10),
+            dbc.Col(dcc.Graph(id='hos_line_mul'), width=10),
             dbc.Col(width=1),
-        ], justify="center",),
-        html.Br(),
+        ], justify="center", ),
 
-        dbc.Row([dbc.Col(width=1), html.Div(id='intermediate-value1', style={'content-visibility': 'hidden'}),
-                 dbc.Col(width=1)], justify="center"),
-        dbc.Row([dbc.Col(width=1), html.Div(id='intermediate-value2', style={'content-visibility': 'hidden'}),
-                 dbc.Col(width=1)], justify="center"),
-        dbc.Row([dbc.Col(width=1), html.Div(id='intermediate-value3', style={'content-visibility': 'hidden'}),
-                 dbc.Col(width=1)], justify="center"),
-        html.Br(),
-        html.Br(),
-        html.Br(),
+        dbc.Row(html.Br()),
+
+        # 图四下拉框
+        dbc.Row([
+            dbc.Col(width=1),
+            dbc.Col([
+                dbc.Label(html.B("医院选择:"), id="hos-choice1"),
+                dcc.Dropdown(id='lis_hos1'),
+                dbc.Row(html.Br()),
+                dbc.Label(html.B("抗菌药物选择:"), id="hos-choice1"),
+                dcc.Dropdown(id='lis_antis', multi=True),
+            ]),
+            dbc.Col(width=1),
+        ]),
+        dbc.Row(html.Br()),
+
+        # 图四和图五
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Row([
+                        dbc.Col(width=1),
+                        dbc.Col(dcc.Graph(id='hos_antis_mul'), width=11),
+                    ], justify="center", ), width=5),
+                dbc.Col(width=1),
+                dbc.Col(
+                    dbc.Row([
+                        dbc.Col(dcc.Graph(id='hos_antis_mul1'), width=11),
+                        dbc.Col(width=1),
+                    ], justify="center", ), width=5),
+            ], justify="center",
+        ),
+        dbc.Row(html.Br()),
+        # 图六下拉框和选择框
+        dbc.Row([
+            dbc.Col(width=1),
+            dbc.Col([
+                dbc.Label(html.B("菌统计口径:"), id="hos-choice"),
+                dcc.RadioItems(
+                    id='fig_bar_type_imshow',
+                    options=[
+                        {'label': '季度', 'value': 'quar'},
+                        {'label': '月份', 'value': 'mon'}
+                    ],
+                    value='quar'
+                ),
+            ]),
+            dbc.Col(width=1),
+        ]),
+        dbc.Row(html.Br()),
+        # 图六
+        dbc.Row([
+            dbc.Col(width=1),
+            dbc.Col(dcc.Graph(id='hos_bar_imshow'), width=10),
+            dbc.Col(width=1),
+        ], justify="center", ),
+
+        dbc.Row(html.Br()),
+
+        #  图一和图二下拉框
+        dbc.Row(
+            [
+                dbc.Col(width=1),
+                dbc.Col( [
+                    dbc.Label(html.B("数据展示类型:"), id="hos-data-type"),
+                    dcc.Dropdown(
+                        id='event_type',
+                        options=[{'label': i, 'value': i} for i in ['未进行计算人数', '未感染性事件计算比例']],
+                        value='未进行计算人数'
+                        ),
+                    ] ),
+                dbc.Col(width=1),
+                dbc.Col([
+                    dbc.Label(html.B("医院名称:"), id="hospname-label"),
+                    dcc.Dropdown(id='event_hospital',),
+                ]),
+                dbc.Col(width=1),
+
+            ], justify="center",
+        ),
+         dbc.Row(html.Br()),
+
+        # 图一和图二
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Row([
+                        dbc.Col(width=1),
+                        dbc.Col(dcc.Graph(id='hos_bar'), width=11),
+                    ], justify="center",) ,width=5),
+                dbc.Col(width=1),
+                dbc.Col(
+                    dbc.Row([
+                        dbc.Col(dcc.Graph(id='hos_pie'), width=11),
+                        dbc.Col(width=1),
+                    ], justify="center", ), width=5),
+            ], justify="center",
+        ),
+
+
+        dbc.Row(html.Br()),
+
+
+
+
+
+
+        # 会话存储store
+        dbc.Row(dcc.Store(id='intermediate-value1')),
+        dbc.Row(dcc.Store(id='intermediate-value2')),
+        dbc.Row(dcc.Store(id='intermediate-value3')),
+        dbc.Row(dcc.Store(id='intermediate-value4')),
+        dbc.Row(dcc.Store(id='intermediate-value5')),
+        dbc.Row(html.Br()),
+        dbc.Row(html.Br()),
+        dbc.Row(html.Br()),
     ]
 )
 
@@ -1389,7 +1469,10 @@ def loading(n_clicks,db,dbtype,dbhost,dbport,dbuser,dbpassword,dborcl,cbasics,an
     for i in range(len(vild_lis)):
         if vild_lis[i] is None or len(vild_lis[i]) == 0:
             if len(lis_style[0]) == 0:
-                lis_style[0] = [html.Li(error_msg[i])]
+                if i==0:
+                    lis_style[0] = [html.Li(error_msg[i ])]
+                else:
+                    lis_style[0] = [html.Li(error_msg[i+1])]
             else:
                 lis_style[0].append(html.Li(error_msg[i]))
             lis_style[1] = {'color': '#9F3A38', 'border-color': '#9F3A38'}
@@ -1555,20 +1638,26 @@ def loading(n_clicks,db,dbtype,dbhost,dbport,dbuser,dbpassword,dborcl,cbasics,an
         df_nxraw_进行计算_不同医院抗菌药发热比例.columns = ['总人数', '有抗菌药物医嘱人数', '发热患者总数', '手术患者总数']
         df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['有抗菌药物医嘱人数'] / df_nxraw_进行计算_不同医院抗菌药发热比例[
             '总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'].map(lambda x:round(x,4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者总数'] / df_nxraw_进行计算_不同医院抗菌药发热比例['总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'].map(lambda x: round(x, 4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者总数'] / df_nxraw_进行计算_不同医院抗菌药发热比例['总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'].map(lambda x: round(x, 4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例.sort_values(by='总人数', ascending=False)
         df_nxraw_进行计算_不同医院抗菌药发热比例.rename_axis(index=['医院名称', '入院年份', '入院月份'], inplace=True)
         df_nxraw_进行计算_不同医院抗菌药发热比例 = df_nxraw_进行计算_不同医院抗菌药发热比例.reset_index()
-        df_nxraw_进行计算_不同医院抗菌药发热比例['月份'] = df_nxraw_进行计算_不同医院抗菌药发热比例.apply(
-            lambda x: str(x.入院年份) + '.' + str(x.入院月份) if int(x.入院月份) >= 10 else str(x.入院年份) + '.0' + str(x.入院月份), axis=1)
+        df_nxraw_进行计算_不同医院抗菌药发热比例['月份'] = df_nxraw_进行计算_不同医院抗菌药发热比例.apply(lambda x: str(x.入院年份) + '年' + str(x.入院月份) + '月' if int(x.入院月份) >= 10 else str(x.入院年份) + '年0' + str(x.入院月份) + '月', axis=1)
+        # df_nxraw_进行计算_不同医院抗菌药发热比例['月份'] = df_nxraw_进行计算_不同医院抗菌药发热比例.apply(lambda x: str(x.入院年份) + '.' + str(x.入院月份) if int(x.入院月份) >= 10 else str(x.入院年份) + '.0' + str(x.入院月份), axis=1)
 
         df_nxraw_进行计算_不同医院抗菌药发热比例 = df_nxraw_进行计算_不同医院抗菌药发热比例[['月份','总人数', '抗菌药物医嘱比例', '发热患者比例', '手术患者比例']]
 
         lis_style[-1] = df_nxraw_进行计算_不同医院抗菌药发热比例.to_json(date_format = 'iso', orient = 'split')
     return lis_style
 
-
+# 计算页面 总人数、抗菌药物患者比例、发热患者比例、手术患者比例图
 @app.callback(
     Output('hos_line', 'figure'),
     Input('fig_type','value'),
@@ -1585,10 +1674,11 @@ def update_graph(fig_type,jsonified_cleaned_data):
     df_月份 = df[['月份']].drop_duplicates()
     df = df_月份.merge(df, on='月份', how='left')
     df = df.sort_values(['月份'])
-    fig = px.line(df, x="月份", y=fig_type ,title = '计算结果展示' )
+    fig = px.line(df, x="月份", y=fig_type ,text=df[fig_type],title = '计算结果展示' )
     return fig
 
 
+# 合并文件并返回
 @app.callback(
     Output("merge-date-down", "children"),
     Input("merge-date","n_clicks"),
@@ -1606,11 +1696,23 @@ def merge_date(nclicks,upload_id,filenames,isCompleted):
     res_df = pd.DataFrame()
     for parent, dirnames, filenames in os.walk(rootdir):
         for filename in filenames:
-            if os.path.exists(parent + '\\' + filename):
-                if res_df.shape[0] == 0:
-                    res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
-                else:
-                    res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            if filename.find('感染性事件结果') > -1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip') > -1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('感染性事件结果') > -1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8'))
+
+            else:
+                continue
 
     csv_name = str(uuid.uuid1()) + '合并结果'
     print("csv_name:", rootdir + '\\' + csv_name + '.csv')
@@ -1638,11 +1740,24 @@ def intermediate_value1(nclicks, upload_id, isCompleted):
     res_df = pd.DataFrame()
     for parent, dirnames, filenames in os.walk(rootdir):
         for filename in filenames:
-            if os.path.exists(parent + '\\' + filename):
-                if res_df.shape[0] == 0:
-                    res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
-                else:
-                    res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            if filename.find('感染性事件结果')>-1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip')>-1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('感染性事件结果')>-1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename),encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename),encoding='utf-8'))
+
+            else:
+                continue
+
     res_df = res_df.drop_duplicates()
     if res_df.shape[0] > 0:
         res_df['入院时间'] = pd.to_datetime(res_df['入院时间'].str[0:10])
@@ -1653,6 +1768,7 @@ def intermediate_value1(nclicks, upload_id, isCompleted):
         df_nxraw_不同医院计算缺失人数 = df_nxraw_未进行感染性事件计算.groupby(['医院名称']).agg({'caseid': 'count'}).reset_index()
         df_nxraw_未进行感染性事件计算比例 = pd.merge(df_nxraw_new_不同医院总人数, df_nxraw_不同医院计算缺失人数, on='医院名称', how='outer')
         df_nxraw_未进行感染性事件计算比例['未计算比例'] = df_nxraw_未进行感染性事件计算比例['caseid_y'] / df_nxraw_未进行感染性事件计算比例['caseid_x']
+        df_nxraw_未进行感染性事件计算比例['未计算比例'] = df_nxraw_未进行感染性事件计算比例['未计算比例'].map(lambda x:round(x,4))
         df_nxraw_未进行感染性事件计算比例排序 = df_nxraw_未进行感染性事件计算比例.sort_values(by='未计算比例', ascending=False)
         df_nxraw_未进行感染性事件计算比例排序.columns = ['医院名称', '患者总数', '未进行计算人数', '未感染性事件计算比例']
 
@@ -1677,11 +1793,23 @@ def intermediate_value2(nclicks,upload_id,isCompleted):
     res_df = pd.DataFrame()
     for parent, dirnames, filenames in os.walk(rootdir):
         for filename in filenames:
-            if os.path.exists(parent + '\\' + filename):
-                if res_df.shape[0] == 0:
-                    res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
-                else:
-                    res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            if filename.find('感染性事件结果') > -1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip') > -1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('感染性事件结果') > -1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8'))
+
+            else:
+                continue
     res_df = res_df.drop_duplicates()
     if res_df.shape[0]>0:
         res_df['入院时间'] = pd.to_datetime(res_df['入院时间'].str[0:10])
@@ -1690,6 +1818,7 @@ def intermediate_value2(nclicks,upload_id,isCompleted):
         df_nxraw_yyrs = res_df.groupby(['医院名称'])[['caseid']].count().reset_index()
         ddf = df_nxraw_wjxgrxsj.merge(df_nxraw_yyrs, on='医院名称')
         ddf['value'] = ddf['caseid_x'] / ddf['caseid_y']
+        ddf['value'] = ddf['value'].map(lambda  x:round(x,4))
         ddf = ddf[['医院名称', '患者未进行感染性事件计算原因', 'value']]
         ddf.columns = ['医院名称', 'name', 'value']
         options =  [{'label': i, 'value': i} for i in ddf['医院名称'].drop_duplicates()]
@@ -1713,17 +1842,32 @@ def intermediate_value2(nclicks,upload_id,isCompleted):
 def intermediate_value3(nclicks, upload_id, isCompleted):
     if not isCompleted:
         return dash.no_update
+    # 本次文件上传路径
     rootdir = os.getcwd() + '\\upload' + '\\' + upload_id
     res_df = pd.DataFrame()
+    # 遍历本次上传文件夹，获得本次上传所有文件，并合并至res_df中
     for parent, dirnames, filenames in os.walk(rootdir):
         for filename in filenames:
-            if os.path.exists(parent + '\\' + filename):
-                if res_df.shape[0] == 0:
-                    res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
-                else:
-                    res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            if filename.find('感染性事件结果') > -1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip') > -1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('感染性事件结果') > -1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8'))
+
+            else:
+                continue
     res_df = res_df.drop_duplicates()
 
+    
     if res_df.shape[0] > 0:
         res_df['入院时间'] = pd.to_datetime(res_df['入院时间'].str[0:10])
         df_nxraw_new = res_df.replace({'是': 1, '否': 0})
@@ -1737,15 +1881,20 @@ def intermediate_value3(nclicks, upload_id, isCompleted):
             ['医院名称', df_nxraw_进行感染性事件计算['入院时间'].dt.year, df_nxraw_进行感染性事件计算['入院时间'].dt.month]).agg(
             {'caseid': 'count', '是否存在抗菌药物医嘱信息': 'sum', '是否发热': 'sum', '是否存在手术信息': 'sum'})
         df_nxraw_进行计算_不同医院抗菌药发热比例.columns = ['总人数', '有抗菌药物医嘱人数', '发热患者总数', '手术患者总数']
-        df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['有抗菌药物医嘱人数'] / df_nxraw_进行计算_不同医院抗菌药发热比例[
-            '总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['有抗菌药物医嘱人数'] / df_nxraw_进行计算_不同医院抗菌药发热比例['总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['抗菌药物医嘱比例'].map(lambda x:round(x,4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者总数'] / df_nxraw_进行计算_不同医院抗菌药发热比例['总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['发热患者比例'].map(lambda x: round(x, 4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者总数'] / df_nxraw_进行计算_不同医院抗菌药发热比例['总人数']
+        df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'] = df_nxraw_进行计算_不同医院抗菌药发热比例['手术患者比例'].map(lambda x: round(x, 4))
+
         df_nxraw_进行计算_不同医院抗菌药发热比例.sort_values(by='总人数', ascending=False)
         df_nxraw_进行计算_不同医院抗菌药发热比例.rename_axis(index=['医院名称', '入院年份', '入院月份'], inplace=True)
         dddf = df_nxraw_进行计算_不同医院抗菌药发热比例.reset_index()
-        dddf['月份'] = dddf.apply(
-            lambda x: str(x.入院年份) + '.' + str(x.入院月份) if x.入院月份 >= 10 else str(x.入院年份) + '.0' + str(x.入院月份), axis=1)
+        # dddf['月份'] = dddf.apply(lambda x: str(x.入院年份) + '.' + str(x.入院月份) if x.入院月份 >= 10 else str(x.入院年份) + '.0' + str(x.入院月份), axis=1)
+        dddf['月份'] = dddf.apply(lambda x: str(x.入院年份) + '年' + str(x.入院月份) + '月' if x.入院月份 >= 10 else str(x.入院年份) + '年0' + str(x.入院月份) + '月', axis=1)
 
         options = [{'label': i, 'value': i} for i in dddf['医院名称'].drop_duplicates()]
         value = list(dddf['医院名称'].drop_duplicates())[0]
@@ -1753,6 +1902,159 @@ def intermediate_value3(nclicks, upload_id, isCompleted):
     else:
         return dash.no_update
 
+
+# 图四图五结果计算
+@app.callback(
+    Output("intermediate-value4", "children"),
+    Output("lis_hos1", "options"),
+    Output("lis_hos1", "value"),
+    Output("lis_antis","options"),
+    Output("lis_antis","value"),
+
+    Input("merge-date", "n_clicks"),
+    State('dash-uploader', 'upload_id'),
+    State('dash-uploader', 'isCompleted')
+)
+def intermediate_value4(nclicks, upload_id, isCompleted):
+    if not isCompleted:
+        return dash.no_update
+    # 本次文件上传路径
+    rootdir = os.getcwd() + '\\upload' + '\\' + upload_id
+    res_df = pd.DataFrame()
+    # 遍历本次上传文件夹，获得本次上传所有文件，并合并至res_df中
+    for parent, dirnames, filenames in os.walk(rootdir):
+        for filename in filenames:
+            if filename.find('医嘱明细') > -1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip') > -1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('医嘱明细') > -1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8'))
+
+            else:
+                continue
+    res_df = res_df.drop_duplicates()
+
+    if res_df.shape[0] > 0:
+
+        res_df['医嘱开始年月'] = pd.to_datetime(res_df['医嘱开始时间'].str[0:7], format='%Y%m', errors='ignore')
+        res_df['入院时间年月'] = pd.to_datetime(res_df['入院时间'].str[0:7], format='%Y%m', errors='ignore')
+        res_df['年份'] = pd.DatetimeIndex(res_df['入院时间']).year
+        res_df['月份'] = pd.DatetimeIndex(res_df['入院时间']).month
+        res_df['季度'] = pd.DatetimeIndex(res_df['入院时间']).quarter
+        # res_df['季度时间'] = res_df['年份'].astype(str) + '.' + res_df['季度'].astype(str)
+        res_df['季度时间'] = res_df['年份'].astype(str) + '年' + res_df['季度'].astype(str) + '季度'
+        df_fig1 = res_df[['医院名称','季度时间','抗菌药物通用名']]
+        df_fig = res_df[['医院名称','季度时间','抗菌药物通用名','权重']].groupby(['医院名称','季度时间','抗菌药物通用名'])[['权重']].count().reset_index()
+        df_fig.rename(columns={'权重':'医嘱数量'},inplace=True)
+
+
+        df_fig1 = df_fig1[['医院名称','季度时间','抗菌药物通用名']].groupby(['医院名称','季度时间'])[['抗菌药物通用名']].count().reset_index()
+        df_fig1.rename(columns={'抗菌药物通用名': '季度医嘱数量'}, inplace=True)
+        df_fig = df_fig.merge(df_fig1,on=['医院名称','季度时间'])
+        # df_fig['医嘱占比'] = df_fig.apply(lambda x: round(x.医嘱数量/x.季度医嘱数量,4) ,axis=1)
+        df_fig['医嘱占比'] = df_fig.apply(lambda x: round(x.医嘱数量 / x.季度医嘱数量, 4) if x.季度医嘱数量>0 else 0, axis=1)
+
+
+        df_fig = df_fig[['医院名称','季度时间','抗菌药物通用名','医嘱数量','医嘱占比']].drop_duplicates()
+        df_fig = df_fig.sort_values(['医院名称','季度时间'])
+        res_df.head()
+        
+        options = [{'label': i, 'value': i} for i in df_fig['医院名称'].drop_duplicates()]
+        value = list(df_fig['医院名称'].drop_duplicates())[0]
+        options1 = [{'label': i, 'value': i} for i in df_fig['抗菌药物通用名'].drop_duplicates()]
+        options1.append({'label': "全选", 'value': "全选"})
+        value1 = list(df_fig['抗菌药物通用名'].drop_duplicates())
+        return df_fig.to_json(date_format='iso', orient='split'), options, value,options1,value1
+    else:
+        return dash.no_update
+
+
+# 图六结果计算
+@app.callback(
+    Output("intermediate-value5", "children"),
+
+    Input("merge-date", "n_clicks"),
+    State('dash-uploader', 'upload_id'),
+    State('dash-uploader', 'isCompleted')
+)
+def intermediate_value4(nclicks, upload_id, isCompleted):
+    if not isCompleted:
+        return dash.no_update
+    # 本次文件上传路径
+    rootdir = os.getcwd() + '\\upload' + '\\' + upload_id
+    res_df = pd.DataFrame()
+    # 遍历本次上传文件夹，获得本次上传所有文件，并合并至res_df中
+    for parent, dirnames, filenames in os.walk(rootdir):
+        for filename in filenames:
+            if filename.find('感染性事件结果') > -1:
+                if os.path.exists(parent + '\\' + filename):
+                    if res_df.shape[0] == 0:
+                        res_df = pd.read_csv(parent + '\\' + filename, encoding='utf-8')
+                    else:
+                        res_df = res_df.append(pd.read_csv(parent + '\\' + filename, encoding='utf-8'))
+            elif filename.find('zip') > -1:
+                zip_file = zipfile.ZipFile(parent + '\\' + filename)
+                for text_file in zip_file.infolist():
+                    if text_file.filename.find('感染性事件结果') > -1:
+                        if res_df.shape[0] == 0:
+                            res_df = pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8')
+                        else:
+                            res_df = res_df.append(pd.read_csv(zip_file.open(text_file.filename), encoding='utf-8'))
+
+            else:
+                continue
+    res_df = res_df.drop_duplicates()
+
+    if res_df.shape[0] > 0:
+        df = res_df.replace({'是': 1, '否': 0})
+        df_进行感染性事件计算 = df[df['是否院内感染'].notnull()]
+        df_进行感染性事件计算 = df_进行感染性事件计算[['caseid', '医院名称', '大肠埃希菌检出次数', '屎肠球菌检出次数', '粪肠球菌检出次数', '肺炎克雷伯菌检出次数', '金黄色葡萄球菌检出次数',
+                                     '铜绿假单胞菌检出次数', '鲍曼不动杆菌检出次数', '入院时间']]
+
+        df_进行感染性事件计算['入院时间年月'] = pd.to_datetime(df_进行感染性事件计算['入院时间'].str[0:7], format='%Y%m', errors='ignore')
+        df_进行感染性事件计算['年份'] = pd.DatetimeIndex(df_进行感染性事件计算['入院时间']).year
+        df_进行感染性事件计算['月份'] = pd.DatetimeIndex(df_进行感染性事件计算['入院时间']).month
+        df_进行感染性事件计算['季度'] = pd.DatetimeIndex(df_进行感染性事件计算['入院时间']).quarter
+        df_进行感染性事件计算['月份'] = df_进行感染性事件计算.apply(lambda x: str(x.年份) + '年' + str(x.月份) + '月' if x.月份 >= 10 else str(x.年份) + '年0' + str(x.月份) + '月', axis=1)
+        df_进行感染性事件计算['季度时间'] = df_进行感染性事件计算['年份'].astype(str) + '年' + df_进行感染性事件计算['季度'].astype(str) + '季度'
+
+        df_bar_mon = df_进行感染性事件计算.groupby(['医院名称', '月份']).agg({'大肠埃希菌检出次数': 'sum',
+                                                                           '屎肠球菌检出次数': 'sum',
+                                                                           '粪肠球菌检出次数': 'sum',
+                                                                           '肺炎克雷伯菌检出次数': 'sum',
+                                                                           '金黄色葡萄球菌检出次数': 'sum',
+                                                                           '铜绿假单胞菌检出次数': 'sum',
+                                                                           '鲍曼不动杆菌检出次数': 'sum'}).reset_index()
+        df_bar_mon = df_bar_mon.sort_values(['医院名称', '月份'])
+
+        df_bar_quar = df_进行感染性事件计算.groupby(['医院名称', '季度时间']).agg({'大肠埃希菌检出次数': 'sum',
+                                                                              '屎肠球菌检出次数': 'sum',
+                                                                              '粪肠球菌检出次数': 'sum',
+                                                                              '肺炎克雷伯菌检出次数': 'sum',
+                                                                              '金黄色葡萄球菌检出次数': 'sum',
+                                                                              '铜绿假单胞菌检出次数': 'sum',
+                                                                              '鲍曼不动杆菌检出次数': 'sum'}).reset_index()
+        df_bar_quar = df_bar_quar.sort_values(['医院名称', '季度时间'])
+        datasets = {
+            'mon': df_bar_mon.to_json(orient='split', date_format='iso'),
+            'quar': df_bar_quar.to_json(orient='split', date_format='iso'),
+        }
+
+        return json.dumps(datasets)
+    else:
+        return dash.no_update
+
+
+# 图一更新
 @app.callback(
     dash.dependencies.Output('hos_bar', 'figure'),
     dash.dependencies.Input('event_type', 'value'),
@@ -1762,12 +2064,12 @@ def update_graph(event_type,jsonified_cleaned_data ):
     try:
         df = pd.read_json(jsonified_cleaned_data, orient='split')
         df = df[['医院名称', event_type]]
-        fig = px.bar(df, x="医院名称", y=event_type)
+        fig = px.bar(df, x="医院名称", y=event_type )
         return fig
     except:
         return dash.no_update
 
-
+# 图二更新
 @app.callback(
     dash.dependencies.Output('hos_pie', 'figure'),
     dash.dependencies.Input('event_hospital', 'value'),
@@ -1783,13 +2085,16 @@ def update_graph(event_hospital,jsonified_cleaned_data ):
         return dash.no_update
 
 
+# 图三更新
 @app.callback(
     dash.dependencies.Output('hos_line_mul', 'figure'),
-    [dash.dependencies.Input('lis_hos', 'value')],
-    dash.dependencies.Input('fig_type', 'value'),
+    dash.dependencies.Input('lis_hos', 'value'),
+    [dash.dependencies.Input('fig_type', 'value')],
 dash.dependencies.Input('intermediate-value3', 'children'),
     prevent_initial_call=True)
 def update_graph(lis_hos,fig_type ,jsonified_cleaned_data):
+    if len(lis_hos) == 0 or len(fig_type) == 0:
+        return dash.no_update
     dddf = pd.read_json(jsonified_cleaned_data, orient='split')
     print(dddf,lis_hos,fig_type)
     lis = []
@@ -1803,25 +2108,89 @@ def update_graph(lis_hos,fig_type ,jsonified_cleaned_data):
     print(df_月份['月份'])
     df = df_月份.merge(df, on='月份', how='left')
     df = df.sort_values(['月份'])
-    fig = px.line(df, x="月份", y=fig_type, color='医院名称')
+    fig = px.line(df, x=df["月份"], y=df[fig_type],text=df[fig_type], color='医院名称')
     return fig
 
-    # try:
-    #     dddf = pd.read_json(jsonified_cleaned_data, orient='split')
-    #     print(dddf)
-    #     df = dddf[dddf['医院名称'].isin(lis_hos)][['医院名称', '入院年份', '入院月份','月份',fig_type]]
-    #     df_月份 = df[['月份']].drop_duplicates()
-    #     print(list(df_月份['月份']))
-    #     df = df_月份.merge(df, on='月份', how='left')
-    #     df = df.sort_values(['月份'])
-    #     fig = px.line(df, x="月份", y=fig_type, color='医院名称')
-    #     return fig
-    # except:
-    #     return dash.no_update
 
+# 图四更新
+@app.callback(
+    dash.dependencies.Output('hos_antis_mul', 'figure'),
+    dash.dependencies.Input('lis_hos1', 'value'),
+    dash.dependencies.Input('lis_antis', 'value'),
+    dash.dependencies.Input('intermediate-value4', 'children'),
+    prevent_initial_call=True)
+def update_graph(lis_hos ,lis_antis,jsonified_cleaned_data):
+    if len(lis_antis) == 0:
+        return dash.no_update
+    dddf = pd.read_json(jsonified_cleaned_data, orient='split')
+    if '全选' in lis_antis:
+        df = dddf[ dddf['医院名称'] == lis_hos ][['季度时间', '抗菌药物通用名', '医嘱数量']]
+    else:
+        df = dddf[(dddf['医院名称'] == lis_hos) & (dddf['抗菌药物通用名'].isin(lis_antis)) ][['季度时间','抗菌药物通用名','医嘱数量']]
 
+    df = df.sort_values(['季度时间'])
+    fig = px.bar(df, x=df["季度时间"], y=df["医嘱数量"], color='抗菌药物通用名',title='抗菌药物数量')
 
+    return fig
+
+# 图五更新
+@app.callback(
+    dash.dependencies.Output('hos_antis_mul1', 'figure'),
+    dash.dependencies.Input('lis_hos1', 'value'),
+    dash.dependencies.Input('lis_antis', 'value'),
+    dash.dependencies.Input('intermediate-value4', 'children'),
+    prevent_initial_call=True)
+def update_graph(lis_hos ,lis_antis,jsonified_cleaned_data):
+    if len(lis_antis) == 0:
+        return dash.no_update
+    dddf = pd.read_json(jsonified_cleaned_data, orient='split')
+    if '全选' in lis_antis:
+        df = dddf[ dddf['医院名称'] == lis_hos ][['季度时间', '抗菌药物通用名', '医嘱占比']]
+    else:
+        df = dddf[(dddf['医院名称'] == lis_hos) & (dddf['抗菌药物通用名'].isin(lis_antis)) ][['季度时间','抗菌药物通用名','医嘱占比']]
+
+    df = df.sort_values(['季度时间'])
+    fig = px.bar(df, x=df["季度时间"], y=df["医嘱占比"], color='抗菌药物通用名',title='抗菌药物比例')
+
+    return fig
+
+# 图六更新
+@app.callback(
+    dash.dependencies.Output('hos_bar_imshow', 'figure'),
+
+    dash.dependencies.Input('lis_hos1', 'value'),
+    dash.dependencies.Input('fig_bar_type_imshow', 'value'),
+    dash.dependencies.Input('intermediate-value5', 'children'),
+    prevent_initial_call=True)
+def update_graph(hos ,bar_type,jsonified_cleaned_data):
+    if len(hos) == 0:
+        return dash.no_update
+
+    datasets = json.loads(jsonified_cleaned_data)
+
+    dff = pd.read_json(datasets[bar_type], orient='split')
+    if bar_type == 'mon':
+        bar_type = '月份'
+    else:
+        bar_type = '季度时间'
+
+    dff = dff.sort_values(['医院名称', bar_type])
+    dff = dff.set_index(['医院名称', bar_type])
+    dff = dff.loc[hos]
+    x = pd.DataFrame(list(dff.T.columns), columns=dff.T.columns.names)[bar_type]
+    y = dff.T.index
+    z = dff.T.values
+    fig = px.imshow(z,
+                    x=x,
+                    y=y,
+                    color_continuous_scale='RdBu_r',
+                    title = '菌检出次数'
+                    )
+
+    fig.update_traces(hovertemplate="时间: %{x} <br> 菌: %{y} <br> 检出次数: %{z}", name='')
+
+    return fig
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False,port=8009)
+    app.run_server(debug=False,port=8089)
