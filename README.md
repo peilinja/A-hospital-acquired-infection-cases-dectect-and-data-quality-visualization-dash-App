@@ -1,4 +1,4 @@
-# A Hospital infection acquired case dectect and data_quality_visualization dashapp
+# A Hospital acquired infection cases dectect and data quality visualization dashapp
 Page1: Hospital infection acquired cases dectect
     - Using A vectorized calculation method
 
